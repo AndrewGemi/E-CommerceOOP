@@ -1,0 +1,103 @@
+@startuml ECommerceSystem
+
+' Abstract and interfaces
+abstract class Product {
+  -String name
+  -double price
+  -int quantity
+  +getName(): String
+  +getPrice(): double
+  +getQuantity(): int
+  +reduceQuantity(amount: int)
+}
+
+abstract class ExpirableProduct {
+  -LocalDate expiryDate
+  +isExpired(): boolean
+}
+
+abstract class NonExpirableProduct {
+}
+
+interface Shippable {
+  +getName(): String
+  +getWeight(): double
+}
+
+' Concrete classes
+class Cheese {
+  -double weight
+  +getWeight(): double
+}
+
+class Biscuits {
+  -double weight
+  +getWeight(): double
+}
+
+class TV {
+  -double weight
+  +getWeight(): double
+}
+
+class Mobile {
+}
+
+' Customer
+class Customer {
+  -String name
+  -double balance
+  -Cart cart
+  +getCart(): Cart
+  +getBalance(): double
+  +checkout(shippingService: ShippingService)
+}
+
+' Cart
+class Cart {
+  -Map<Product, Integer> items
+  +addProduct(product: Product, quantity: int)
+  +getItems(): Map<Product, Integer>
+  +calculateSubtotal(): double
+  +getShippableItems(): List<Shippable>
+  +isEmpty(): boolean
+}
+
+' Shipping Service
+class ShippingService {
+  +ship(items: List<Shippable>)
+  +calculateShippingFee(items: List<Shippable>): double
+}
+
+' Exceptions
+class EmptyCartException {
+}
+
+class InsufficientBalanceException {
+}
+
+class OutOfStockException {
+}
+
+class ExpiredProductException {
+}
+
+' Relationships
+Product <|-- ExpirableProduct
+Product <|-- NonExpirableProduct
+ExpirableProduct <|-- Cheese
+ExpirableProduct <|-- Biscuits
+NonExpirableProduct <|-- TV
+NonExpirableProduct <|-- Mobile
+Shippable <|.. Cheese
+Shippable <|.. Biscuits
+Shippable <|.. TV
+Customer o--> "1" Cart
+Cart o--> "*" Product
+ShippingService --> "*" Shippable
+Exception <|-- EmptyCartException
+Exception <|-- InsufficientBalanceException
+Exception <|-- OutOfStockException
+Exception <|-- ExpiredProductException
+
+@enduml
